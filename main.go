@@ -3,6 +3,7 @@ package main
 import (
 	"api/bootstrap"
 	btsConfig "api/config"
+	"api/pkg/app"
 	"api/pkg/config"
 
 	"flag"
@@ -26,6 +27,15 @@ func main() {
 
 	// 初始化 Logger
 	bootstrap.SetupLogger()
+
+	// 设置 gin 的运行模式，支持 debug, release, test
+	// release 会屏蔽调试信息，官方建议生产环境中使用
+	// 非 release 模式 gin 终端打印太多信息，干扰到我们程序中的 Log
+	if app.IsProduction() {
+		gin.SetMode(gin.ReleaseMode)
+	} else {
+		gin.SetMode(gin.DebugMode)
+	}
 
 	// new 一个 Gin Engine 实例
 	router := gin.New()
